@@ -3,12 +3,9 @@ const fs = require('fs')
 const path = require('path')
 const prevent = require('./utils/prevent')
 const newFuncName = require('./utils/newFuncName')
+const { source, sourceFuncBody } = require('./utils/source')
 
 const T = '  '
-
-function source(script, node) {
-  return script.substring(node.start, node.end)
-}
 
 function template(content) {
   const filePath = path.resolve(__dirname, './template')
@@ -62,14 +59,8 @@ module.exports = function parse(str) {
 
         methods.forEach(node => {
 
-          const isShorthand = node.method
-
           let funcName = newFuncName(node.key.name)
-          let funcBody = source(script, node.value)
-
-          if(!isShorthand) {
-            funcBody = funcBody.replace(/^function\s*/, '')
-          }
+          let funcBody = sourceFuncBody(script, node)
 
           let methodOut = ''
           let lifecycleOut = ''
