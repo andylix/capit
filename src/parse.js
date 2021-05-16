@@ -87,7 +87,7 @@ module.exports = function parse(str) {
             out.created = `(function created${funcBody})()`
           }
           else { // other methods
-            methodOut = `function ${funcName}${funcBody}`
+            methodOut = `const ${funcName} = function${funcBody}`
           }
 
           if(methodOut !== '') {
