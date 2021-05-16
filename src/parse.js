@@ -1,5 +1,7 @@
-const Parser = require('acorn-loose');
-const prevent = require('./utils/prevent');
+const Parser = require('acorn-loose')
+const fs = require('fs')
+const path = require('path')
+const prevent = require('./utils/prevent')
 
 const T = '  '
 
@@ -8,13 +10,9 @@ function source(script, node) {
 }
 
 function template(content) {
-  return `export default {
-  ${content.props}
-  setup {
-    
-  }
-}
-` 
+  const filePath = path.resolve(__dirname, './template')
+  const tmpl = fs.readFileSync(filePath, 'utf8')
+  return tmpl.replace('${props}', content.props)
 }
 
 module.exports = function parse(str) {

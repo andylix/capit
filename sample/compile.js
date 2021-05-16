@@ -1,5 +1,7 @@
 const fs = require('fs')
+const path = require('path')
 const parse = require('../src/parse')
 
-const file = fs.readFileSync('./sample/InputFile.vue', 'utf8')
+const filePath = path.resolve(__dirname, './InputFile.vue')
+const file = fs.readFileSync(filePath, 'utf8')
 parse(file)

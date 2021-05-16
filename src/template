@@ -1,0 +1,10 @@
+export default {
+  ${props},
+  setup() {
+    ${refs}
+
+    ${computed}
+
+    ${returns}
+  }
+}
