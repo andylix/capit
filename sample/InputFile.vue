@@ -32,11 +32,38 @@ export default {
     add() {
       this.count++
     },
+    beforeCreate: function() {
+      console.log('lifecycle log: component beforeCreate')
+    },
+    created() {
+      console.log('lifecycle log: component created')
+    },
+    beforeMount() {
+      console.log('lifecycle log: component beforeMount')
+    },
     mounted() {
       console.log('lifecycle log: component mounted')
     },
+    beforeUpdate() {
+      console.log('lifecycle log: component beforeUpdate')
+    },
     updated() {
       console.log('lifecycle log: component updated')
+    },
+    beforeUnmount() {
+      console.log('lifecycle log: component beforeUnmount')
+    },
+    unmounted() {
+      console.log('lifecycle log: component unmounted')
+    },
+    errorCaptured() {
+      console.log('lifecycle log: component errorCaptured')
+    },
+    renderTracked() {
+      console.log('lifecycle log: component renderTracked')
+    },
+    renderTriggered() {
+      console.log('lifecycle log: component renderTriggered')
     }
   }
 }

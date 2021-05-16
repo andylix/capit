@@ -2,6 +2,7 @@ const Parser = require('acorn-loose')
 const fs = require('fs')
 const path = require('path')
 const prevent = require('./utils/prevent')
+const newFuncName = require('./utils/newFuncName')
 
 const T = '  '
 
@@ -11,8 +12,13 @@ function source(script, node) {
 
 function template(content) {
   const filePath = path.resolve(__dirname, './template')
-  const tmpl = fs.readFileSync(filePath, 'utf8')
-  return tmpl.replace('${props}', content.props)
+  let tmpl = fs.readFileSync(filePath, 'utf8')
+  let out = tmpl.replace('${props}', content.props)
+  out = out.replace('${methods}', content.methods)
+  out = out.replace('${beforeCreate}', content.beforeCreate)
+  out = out.replace('${created}', content.created)
+  out = out.replace('${lifecycles}', content.lifecycles)
+  return out
 }
 
 module.exports = function parse(str) {
@@ -36,7 +42,7 @@ module.exports = function parse(str) {
   const properties = declaration.properties
 
   let out = {
-    data: '', methods: '', computed: '', props: ''
+    data: '', methods: '', computed: '', props: '', lifecycles: '', beforeCreate: '', created: ''
   }
 
   properties.forEach(op => {
@@ -48,17 +54,58 @@ module.exports = function parse(str) {
       console.log('data ..')
     }
     if(op.key.name === 'methods') {
+      let allMethodsOut = []
+      let allLifecyclesOut = []
+
       if(op.value.type === 'ObjectExpression'){
         const methods = op.value.properties
+
         methods.forEach(node => {
-          console.log(node.key.name + '()')
-        })
-      }
-      console.log('methods ..')
-    }
+
+          const isShorthand = node.method
+
+          let funcName = newFuncName(node.key.name)
+          let funcBody = source(script, node.value)
+
+          if(!isShorthand) {
+            funcBody = funcBody.replace(/^function\s*/, '')
+          }
+
+          let methodOut = ''
+          let lifecycleOut = ''
+
+          // GENERATE OUTPUT
+          
+          if(['onBeforeMount', 'onMounted', 'onBeforeUpdate', 'onUpdated', 'onBeforeUnmount', 
+              'onUnmounted', 'onErrorCaptured', 'onRenderTracked', 'onRenderTriggered'].indexOf(funcName) > -1) {
+            lifecycleOut = `${funcName}(function${funcBody})`
+          }
+          else if(funcName === 'beforeCreate') {
+            out.beforeCreate = `(function beforeCreate${funcBody})()`
+          }
+          else if(funcName === 'created') {
+            out.created = `(function created${funcBody})()`
+          }
+          else { // other methods
+            methodOut = `function ${funcName}${funcBody}`
+          }
+
+          if(methodOut !== '') {
+            allMethodsOut.push(methodOut)
+          }
+          
+          if(lifecycleOut !== '') {
+            allLifecyclesOut.push(lifecycleOut)
+          }
+        })// end forEach
+      } // end if ObjectExpression
+
+      out.methods = allMethodsOut.join('\n\n'+T+T)
+      out.lifecycles = allLifecyclesOut.join('\n\n'+T+T)
+    } // end if methods
     if(op.key.name === 'computed') {
       console.log('computed ..')
     }
   })
-  // console.log(template(out))
+  console.log(template(out))
 }

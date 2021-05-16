@@ -1,9 +1,18 @@
 export default {
   ${props},
   setup() {
+
+    ${beforeCreate}
+
     ${refs}
 
     ${computed}
+
+    ${created}
+    
+    ${lifecycles}
+
+    ${methods}
 
     ${returns}
   }
