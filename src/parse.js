@@ -48,11 +48,17 @@ module.exports = function parse(str) {
       console.log('data ..')
     }
     if(op.key.name === 'methods') {
+      if(op.value.type === 'ObjectExpression'){
+        const methods = op.value.properties
+        methods.forEach(node => {
+          console.log(node.key.name + '()')
+        })
+      }
       console.log('methods ..')
     }
     if(op.key.name === 'computed') {
       console.log('computed ..')
     }
   })
-  console.log(template(out))
+  // console.log(template(out))
 }

@@ -31,6 +31,12 @@ export default {
   methods: {
     add() {
       this.count++
+    },
+    mounted() {
+      console.log('lifecycle log: component mounted')
+    },
+    updated() {
+      console.log('lifecycle log: component updated')
     }
   }
 }
