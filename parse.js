@@ -1,6 +1,8 @@
 const Parser = require('acorn-loose');
 const fs = require('fs')
 
+const T = '  '
+
 function prevent(key, cond) {
   if(!cond) { return }
   const messages = {
@@ -13,6 +15,10 @@ function prevent(key, cond) {
   const message = messages[key]
   console.log('parser error: ' + message)
   throw new Error()
+}
+
+function source(script, node) {
+  return script.substring(node.start, node.end)
 }
 
 const file = fs.readFileSync('./MyComponent.vue', 'utf8')
@@ -35,6 +41,34 @@ prevent('NO_OBJECT', declaration.type !== 'ObjectExpression')
 
 const properties = declaration.properties
 
+let out = {
+  data: '', methods: '', computed: '', props: ''
+}
+
 properties.forEach(op => {
-  console.log(op.key)
+  if(op.key.name === 'props') {
+    const props = source(script, op)
+    out.props = props
+  }
+  if(op.key.name === 'data') {
+    console.log('data ..')
+  }
+  if(op.key.name === 'methods') {
+    console.log('methods ..')
+  }
+  if(op.key.name === 'computed') {
+    console.log('computed ..')
+  }
 })
+
+function template(content) {
+  return `export default {
+  ${content.props}
+  setup {
+    
+  }
+}
+` 
+}
+
+console.log(template(out))
