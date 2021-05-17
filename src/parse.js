@@ -5,6 +5,7 @@ import prevent from './utils/prevent.js'
 import convertProps from './convert/props.js'
 import convertData from './convert/data.js'
 import convertMethods from './convert/methods.js'
+import convertComputed from './convert/computed.js'
 
 const COMMA = ','
 
@@ -104,7 +105,9 @@ export default function parse(str) {
 
     if(op.key.name === 'computed') {
       prevent('COMPUTED_NOT_OBJECT', op.value.type !== 'ObjectExpression')
-      console.log('computed ..')
+      convertComputed(op, script, function(computed) {
+        out.computed = computed
+      })
     }
   })
   console.log(template(out))

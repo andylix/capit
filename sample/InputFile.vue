@@ -30,6 +30,9 @@ export default {
   computed: {
     next() {
       return this.count + this.interval
+    },
+    backgroundColor: function() {
+      return this.darkMode ? 'black' : 'white'
     }
   },
   methods: {
