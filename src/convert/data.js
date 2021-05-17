@@ -19,23 +19,18 @@ export default function convertData(op, script, done) {
   items.forEach(item => {
     const dataType = item.value.type
     const key = item.key.name
+    
+    warning('NO_FUNCTION_STATE', dataType === 'FunctionExpression', [key])
+
     if(dataType === 'ObjectExpression') {
       const val = source(script, item.value)
       reactivesOut.push(`const ${key} = reactive(${val})`)
       reactiveReturnables.push(key)
     }
-    else if(dataType === 'ArrayExpression') {
+    else {
       const val = source(script, item.value)
       refsOut.push(`const ${key} = ref(${val})`)
       refReturnables.push(key)
-    }
-    else if(dataType === 'Literal') {
-      const val = item.value.value
-      refsOut.push(`const ${key} = ref(${val})`)
-      refReturnables.push(key)
-    }
-    else {        
-      warning('NO_FUNCTION_STATE', dataType === 'FunctionExpression', [key])
     }
   })
   const refs = refsOut.join(N+N+T+T)
