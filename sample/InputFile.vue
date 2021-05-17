@@ -20,7 +20,11 @@ export default {
   data() {
     return {
       count: 0,
-      label: 'Count'
+      label: 'Count',
+      tags: ['vuejs', 'javascript', 'web development'],
+      config: {
+        darkMode: true,
+      }
     }
   },
   computed: {

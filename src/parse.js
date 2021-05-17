@@ -2,6 +2,7 @@ const Parser = require('acorn-loose')
 const fs = require('fs')
 const path = require('path')
 const prevent = require('./utils/prevent')
+const warning = require('./utils/warning')
 const newFuncName = require('./utils/newFuncName')
 const { source, sourceFuncBody } = require('./utils/source')
 
@@ -15,6 +16,8 @@ function template(content) {
   out = out.replace('${beforeCreate}', content.beforeCreate)
   out = out.replace('${created}', content.created)
   out = out.replace('${lifecycles}', content.lifecycles)
+  out = out.replace('${refs}', content.refs)
+  out = out.replace('${reactives}', content.reactives)
   return out
 }
 
@@ -39,7 +42,7 @@ module.exports = function parse(str) {
   const properties = declaration.properties
 
   let out = {
-    data: '', methods: '', computed: '', props: '', lifecycles: '', beforeCreate: '', created: ''
+    reactives: '', refs: '', methods: '', computed: '', props: '', lifecycles: '', beforeCreate: '', created: ''
   }
 
   properties.forEach(op => {
@@ -48,14 +51,36 @@ module.exports = function parse(str) {
       out.props = props
     }
     if(op.key.name === 'data') {
+      const refsOut = []
+      const reactivesOut = []
       const funcBodyNodes = op.value.body.body
       prevent('NOT_RETURN', funcBodyNodes.length !== 1 || funcBodyNodes[0].type !== 'ReturnStatement')
       const objectNode = funcBodyNodes[0].argument
-      prevent('NOT_DATA_OBJECT', objectNode.type !== 'ObjectExpression')
+      warning('NOT_DATA_OBJECT', objectNode.type !== 'ObjectExpression')
       const items = objectNode.properties
       items.forEach(item => {
-        console.log(item)
+        const dataType = item.value.type
+        if(dataType === 'ObjectExpression') {
+          const key = item.key.name
+          const val = source(script, item.value)
+          reactivesOut.push(`const ${key} = reactive(${val})`)
+        }
+        else if(dataType === 'ArrayExpression') {
+          const key = item.key.name
+          const val = source(script, item.value)
+          refsOut.push(`const ${key} = ref(${val})`)
+        }
+        else if(dataType === 'Literal') {
+          const key = item.key.name
+          const val = item.value.value
+          refsOut.push(`const ${key} = ref(${val})`)
+        }
+        else {        
+          warning('NO_FUNCTION_STATE', dataType === 'FunctionExpression')
+        }
       })
+      out.refs = refsOut.join('\n\n'+T+T)
+      out.reactives = reactivesOut.join('\n\n'+T+T)
     }
     if(op.key.name === 'methods') {
       let allMethodsOut = []
@@ -105,5 +130,5 @@ module.exports = function parse(str) {
       console.log('computed ..')
     }
   })
-  // console.log(template(out))
+  console.log(template(out))
 }

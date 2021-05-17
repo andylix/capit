@@ -6,10 +6,12 @@ export default {
 
     ${refs}
 
+    ${reactives}
+
     ${computed}
 
     ${created}
-    
+
     ${lifecycles}
 
     ${methods}
