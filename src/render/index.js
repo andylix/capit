@@ -36,5 +36,10 @@ export default function render(content) {
   if(content.computed !== null) {
     out = out.replace('${computed}', content.computed)
   }
+
+  const returns = [...content.returnRefsReactives, ...content.returnComputed, ...content.returnMethods]
+  const returnStatement = `return { ${returns.join(', ')} }`
+  out = out.replace('${returns}', returnStatement)
+
   return out
 }

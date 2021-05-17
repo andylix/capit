@@ -36,7 +36,9 @@ export default function parse(str) {
     beforeCreate: null, 
     created: null, 
     computed: null,
-    returns: null
+    returnRefsReactives: [],
+    returnComputed: [],
+    returnMethods: [],
   }
 
   properties.forEach(op => {
@@ -53,6 +55,15 @@ export default function parse(str) {
       convertData(op, script, function(refs, reactives, returnables) {
         out.refs = refs
         out.reactives = reactives
+        out.returnRefsReactives = returnables
+      })
+    }
+
+    if(op.key.name === 'computed') {
+      prevent('COMPUTED_NOT_OBJECT', op.value.type !== 'ObjectExpression')
+      convertComputed(op, script, function(computed, returnables) {
+        out.computed = computed
+        out.returnComputed = returnables
       })
     }
 
@@ -63,13 +74,7 @@ export default function parse(str) {
         out.lifecycles = lifecycles
         out.beforeCreate = beforeCreate
         out.created = created
-      })
-    }
-
-    if(op.key.name === 'computed') {
-      prevent('COMPUTED_NOT_OBJECT', op.value.type !== 'ObjectExpression')
-      convertComputed(op, script, function(computed, returnables) {
-        out.computed = computed
+        out.returnMethods = returnables
       })
     }
   })
