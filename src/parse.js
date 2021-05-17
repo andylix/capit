@@ -6,16 +6,41 @@ import convertProps from './convert/props.js'
 import convertData from './convert/data.js'
 import convertMethods from './convert/methods.js'
 
+const COMMA = ','
+
 function template(content) {
   const filePath = path.resolve('./src', './template')
   let tmpl = fs.readFileSync(filePath, 'utf8')
-  let out = tmpl.replace('${props}', content.props)
-  out = out.replace('${methods}', content.methods)
-  out = out.replace('${beforeCreate}', content.beforeCreate)
-  out = out.replace('${created}', content.created)
-  out = out.replace('${lifecycles}', content.lifecycles)
-  out = out.replace('${refs}', content.refs)
-  out = out.replace('${reactives}', content.reactives)
+  let out = tmpl
+
+  if(content.props !== null) {
+    out = out.replace('${props}', content.props + COMMA)
+  }
+  else {
+    out = out.replace('${props}', '')
+  }
+
+  if(content.refs !== null) {
+    out = out.replace('${refs}', content.refs)
+  }
+  if(content.reactives !== null) {
+    out = out.replace('${reactives}', content.reactives)
+  }
+  if(content.methods !== null) {
+    out = out.replace('${methods}', content.methods)
+  }
+  if(content.lifecycles !== null) {
+    out = out.replace('${lifecycles}', content.lifecycles)
+  }
+  if(content.beforeCreate !== null) {
+    out = out.replace('${beforeCreate}', content.beforeCreate)
+  }
+  if(content.created !== null) {
+    out = out.replace('${created}', content.created)
+  }
+  if(content.computed !== null) {
+    out = out.replace('${computed}', content.computed)
+  }
   return out
 }
 
@@ -39,8 +64,15 @@ export default function parse(str) {
 
   const properties = declaration.properties
 
-  let out = {
-    reactives: '', refs: '', methods: '', computed: '', props: '', lifecycles: '', beforeCreate: '', created: ''
+  let out = { 
+    props: null,
+    reactives: null, 
+    refs: null, 
+    methods: null,
+    lifecycles: null,
+    beforeCreate: null, 
+    created: null, 
+    computed: null  
   }
 
   properties.forEach(op => {
@@ -48,21 +80,25 @@ export default function parse(str) {
     if(op.key.name === 'props') {
       prevent('PROPS_NOT_OBJECT', op.value.type !== 'ObjectExpression')
       convertProps(op, script, props => {
-        out = { ...out, props }
+        out.props = props
       })
     }
 
     if(op.key.name === 'data') {
       prevent('DATA_NOT_FUNCTION', op.value.type !== 'FunctionExpression')
       convertData(op, script, function(refs, reactives) {
-        out = { ...out, refs, reactives }
+        out.refs = refs
+        out.reactives = reactives
       })
     }
 
     if(op.key.name === 'methods') {
       prevent('METHODS_NOT_OBJECT', op.value.type !== 'ObjectExpression')
       convertMethods(op, script, function(methods, lifecycles, beforeCreate, created) {
-        out = { ...out, methods, lifecycles, beforeCreate, created }
+        out.methods = methods
+        out.lifecycles = lifecycles
+        out.beforeCreate = beforeCreate
+        out.created = created
       })
     }
 
