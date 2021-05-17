@@ -6,9 +6,6 @@ import convertProps from './convert/props.js'
 import convertData from './convert/data.js'
 import convertMethods from './convert/methods.js'
 
-const N = '\n' // new line
-const T = '  ' // tab
-
 function template(content) {
   const filePath = path.resolve('./src', './template')
   let tmpl = fs.readFileSync(filePath, 'utf8')
