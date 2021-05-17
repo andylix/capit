@@ -48,7 +48,14 @@ module.exports = function parse(str) {
       out.props = props
     }
     if(op.key.name === 'data') {
-      console.log('data ..')
+      const funcBodyNodes = op.value.body.body
+      prevent('NOT_RETURN', funcBodyNodes.length !== 1 || funcBodyNodes[0].type !== 'ReturnStatement')
+      const objectNode = funcBodyNodes[0].argument
+      prevent('NOT_DATA_OBJECT', objectNode.type !== 'ObjectExpression')
+      const items = objectNode.properties
+      items.forEach(item => {
+        console.log(item)
+      })
     }
     if(op.key.name === 'methods') {
       let allMethodsOut = []
@@ -98,5 +105,5 @@ module.exports = function parse(str) {
       console.log('computed ..')
     }
   })
-  console.log(template(out))
+  // console.log(template(out))
 }
