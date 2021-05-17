@@ -5,7 +5,8 @@ const T = '  ' // tab
 
 export default function convertComputed(op, script, done) {
 
-  let allComputedOut = []
+  const allComputedOut = []
+  const returnables = []
 
   const properties = op.value.properties
 
@@ -17,9 +18,10 @@ export default function convertComputed(op, script, done) {
     const computedOut = `const ${varName} = computed(function${funcBody})`
 
     allComputedOut.push(computedOut)
+    returnables.push(varName)
   })
 
   const out = allComputedOut.join(N+N+T+T)
 
-  done(out)
+  done(out, returnables)
 }

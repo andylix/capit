@@ -6,10 +6,11 @@ const T = '  ' // tab
 
 export default function convertMethods(op, script, done) {
 
-  let allMethodsOut = []
-  let allLifecyclesOut = []
+  const allMethodsOut = []
+  const allLifecyclesOut = []
   let beforeCreateOut = ''
   let createdOut = ''
+  const returnables = []
 
   const methods = op.value.properties
 
@@ -39,6 +40,7 @@ export default function convertMethods(op, script, done) {
 
     if(methodOut !== '') {
       allMethodsOut.push(methodOut)
+      returnables.push(funcName)
     }
     
     if(lifecycleOut !== '') {
@@ -49,5 +51,5 @@ export default function convertMethods(op, script, done) {
   const methodsOut = allMethodsOut.join(N+N+T+T)
   const lifecyclesOut = allLifecyclesOut.join(N+N+T+T)
 
-  done(methodsOut, lifecyclesOut, beforeCreateOut, createdOut)
+  done(methodsOut, lifecyclesOut, beforeCreateOut, createdOut, returnables)
 }

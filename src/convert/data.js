@@ -9,6 +9,8 @@ export default function convertData(op, script, done) {
 
   const refsOut = []
   const reactivesOut = []
+  const refReturnables = []
+  const reactiveReturnables = []
   const funcBodyNodes = op.value.body.body
   prevent('DATA_NOT_RETURNING', funcBodyNodes.length !== 1 || funcBodyNodes[0].type !== 'ReturnStatement')
   const objectNode = funcBodyNodes[0].argument
@@ -16,26 +18,28 @@ export default function convertData(op, script, done) {
   const items = objectNode.properties
   items.forEach(item => {
     const dataType = item.value.type
+    const key = item.key.name
     if(dataType === 'ObjectExpression') {
-      const key = item.key.name
       const val = source(script, item.value)
       reactivesOut.push(`const ${key} = reactive(${val})`)
+      reactiveReturnables.push(key)
     }
     else if(dataType === 'ArrayExpression') {
-      const key = item.key.name
       const val = source(script, item.value)
       refsOut.push(`const ${key} = ref(${val})`)
+      refReturnables.push(key)
     }
     else if(dataType === 'Literal') {
-      const key = item.key.name
       const val = item.value.value
       refsOut.push(`const ${key} = ref(${val})`)
+      refReturnables.push(key)
     }
     else {        
-      warning('NO_FUNCTION_STATE', dataType === 'FunctionExpression')
+      warning('NO_FUNCTION_STATE', dataType === 'FunctionExpression', [key])
     }
   })
   const refs = refsOut.join(N+N+T+T)
   const reactives = reactivesOut.join(N+N+T+T)
-  done(refs, reactives)
+  const returnables = refReturnables.concat(reactiveReturnables)
+  done(refs, reactives, returnables)
 }

@@ -7,6 +7,7 @@ import convertComputed from './convert/computed.js'
 import render from './render/index.js'
 
 export default function parse(str) {
+
   const splits = str.split(/<script.*\>/)
 
   prevent('NO_SCRIPT', splits.length === 1)
@@ -34,7 +35,8 @@ export default function parse(str) {
     lifecycles: null,
     beforeCreate: null, 
     created: null, 
-    computed: null  
+    computed: null,
+    returns: null
   }
 
   properties.forEach(op => {
@@ -48,7 +50,7 @@ export default function parse(str) {
 
     if(op.key.name === 'data') {
       prevent('DATA_NOT_FUNCTION', op.value.type !== 'FunctionExpression')
-      convertData(op, script, function(refs, reactives) {
+      convertData(op, script, function(refs, reactives, returnables) {
         out.refs = refs
         out.reactives = reactives
       })
@@ -56,7 +58,7 @@ export default function parse(str) {
 
     if(op.key.name === 'methods') {
       prevent('METHODS_NOT_OBJECT', op.value.type !== 'ObjectExpression')
-      convertMethods(op, script, function(methods, lifecycles, beforeCreate, created) {
+      convertMethods(op, script, function(methods, lifecycles, beforeCreate, created, returnables) {
         out.methods = methods
         out.lifecycles = lifecycles
         out.beforeCreate = beforeCreate
@@ -66,11 +68,11 @@ export default function parse(str) {
 
     if(op.key.name === 'computed') {
       prevent('COMPUTED_NOT_OBJECT', op.value.type !== 'ObjectExpression')
-      convertComputed(op, script, function(computed) {
+      convertComputed(op, script, function(computed, returnables) {
         out.computed = computed
       })
     }
   })
-  
+
   console.log(render(out))
 }
