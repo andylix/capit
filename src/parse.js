@@ -51,25 +51,21 @@ module.exports = function parse(str) {
     if(op.key.name === 'props') {
       prevent('PROPS_NOT_OBJECT', op.value.type !== 'ObjectExpression')
       convertProps(op, script, props => {
-        out.props = props
+        out = { ...out, props }
       })
     }
 
     if(op.key.name === 'data') {
       prevent('DATA_NOT_FUNCTION', op.value.type !== 'FunctionExpression')
       convertData(op, script, function(refs, reactives) {
-        out.refs = refs
-        out.reactives = reactives
+        out = { ...out, refs, reactives }
       })
     }
 
     if(op.key.name === 'methods') {
       prevent('METHODS_NOT_OBJECT', op.value.type !== 'ObjectExpression')
       convertMethods(op, script, function(methods, lifecycles, beforeCreate, created) {
-        out.methods = methods
-        out.lifecycles = lifecycles
-        out.beforeCreate = beforeCreate
-        out.created = created
+        out = { ...out, methods, lifecycles, beforeCreate, created }
       })
     }
 
