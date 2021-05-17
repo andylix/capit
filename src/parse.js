@@ -6,13 +6,7 @@ import convertMethods from './convert/methods.js'
 import convertComputed from './convert/computed.js'
 import render from './render/index.js'
 
-export default function parse(str) {
-
-  const splits = str.split(/<script.*\>/)
-
-  prevent('NO_SCRIPT', splits.length === 1)
-
-  let script = splits[1].split('</script>')[0].trim()
+export default function parse(script) {
 
   prevent('NO_CODE', script === '')
 
@@ -79,5 +73,5 @@ export default function parse(str) {
     }
   })
 
-  console.log(render(out))
+  return render(out)
 }

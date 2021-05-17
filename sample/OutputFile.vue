@@ -17,61 +17,75 @@ export default {
       default: 1
     }
   },
-  data() {
-    return {
-      count: 0,
-      label: 'Count',
-      tags: ['vuejs', 'javascript', 'web development'],
-      config: {
-        darkMode: true,
-      }
-    }
-  },
-  computed: {
-    next() {
-      return this.count + this.interval
-    },
-    backgroundColor: function() {
-      return this.darkMode ? 'black' : 'white'
-    }
-  },
-  methods: {
-    add() {
-      this.count++
-    },
-    beforeCreate: function() {
+  setup() {
+
+    (function beforeCreate() {
       console.log('lifecycle log: component beforeCreate')
-    },
-    created() {
+    })()
+
+    const count = ref(0)
+
+    const label = ref(Count)
+
+    const tags = ref(['vuejs', 'javascript', 'web development'])
+
+    const config = reactive({
+        darkMode: true,
+      })
+
+    const next = computed(function() {
+      return this.count + this.interval
+    })
+
+    const backgroundColor = computed(function() {
+      return this.darkMode ? 'black' : 'white'
+    })
+
+    (function created() {
       console.log('lifecycle log: component created')
-    },
-    beforeMount() {
+    })()
+
+    onBeforeMount(function() {
       console.log('lifecycle log: component beforeMount')
-    },
-    mounted() {
+    })
+
+    onMounted(function() {
       console.log('lifecycle log: component mounted')
-    },
-    beforeUpdate() {
+    })
+
+    onBeforeUpdate(function() {
       console.log('lifecycle log: component beforeUpdate')
-    },
-    updated() {
+    })
+
+    onUpdated(function() {
       console.log('lifecycle log: component updated')
-    },
-    beforeUnmount() {
+    })
+
+    onBeforeUnmount(function() {
       console.log('lifecycle log: component beforeUnmount')
-    },
-    unmounted() {
+    })
+
+    onUnmounted(function() {
       console.log('lifecycle log: component unmounted')
-    },
-    errorCaptured() {
+    })
+
+    onErrorCaptured(function() {
       console.log('lifecycle log: component errorCaptured')
-    },
-    renderTracked() {
+    })
+
+    onRenderTracked(function() {
       console.log('lifecycle log: component renderTracked')
-    },
-    renderTriggered() {
+    })
+
+    onRenderTriggered(function() {
       console.log('lifecycle log: component renderTriggered')
+    })
+
+    const add = function() {
+      this.count++
     }
+
+    return { count, label, tags, config, next, backgroundColor, add }
   }
 }
 </script>
