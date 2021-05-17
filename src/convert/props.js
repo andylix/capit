@@ -1,6 +1,6 @@
-const { source } = require('../utils/source')
+import { source } from '../utils/source.js'
 
-module.exports = function convertProps(op, script, done) {
+export default function convertProps(op, script, done) {
   const out = source(script, op)
   done(out)
 }

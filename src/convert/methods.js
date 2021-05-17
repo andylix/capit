@@ -1,10 +1,10 @@
-const { sourceFuncBody } = require('../utils/source')
-const newFuncName = require('../utils/newFuncName')
+import { sourceFuncBody } from '../utils/source.js'
+import newFuncName from '../utils/newFuncName.js'
 
 const N = '\n' // new line
 const T = '  ' // tab
 
-module.exports = function convertMethods(op, script, done) {
+export default function convertMethods(op, script, done) {
 
   let allMethodsOut = []
   let allLifecyclesOut = []

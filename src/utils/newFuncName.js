@@ -1,4 +1,4 @@
-module.exports = function(oldName) {
+export default function newFuncName(oldName) {
   if(oldName === 'beforeCreate') {
     return 'beforeCreate'
   }

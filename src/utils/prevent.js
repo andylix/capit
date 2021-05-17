@@ -1,4 +1,4 @@
-module.exports = function prevent(key, cond) {
+export default function prevent(key, cond) {
   if(!cond) { return }
   const errorMessages = {
     'DATA_NOT_FUNCTION': 'the data property needs to be a function',

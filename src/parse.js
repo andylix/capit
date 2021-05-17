@@ -1,16 +1,16 @@
-const Parser = require('acorn-loose')
-const fs = require('fs')
-const path = require('path')
-const prevent = require('./utils/prevent')
-const convertProps = require('./convert/props')
-const convertData = require('./convert/data')
-const convertMethods = require('./convert/methods')
+import * as Parser from 'acorn-loose'
+import fs from 'fs'
+import path from 'path'
+import prevent from './utils/prevent.js'
+import convertProps from './convert/props.js'
+import convertData from './convert/data.js'
+import convertMethods from './convert/methods.js'
 
 const N = '\n' // new line
 const T = '  ' // tab
 
 function template(content) {
-  const filePath = path.resolve(__dirname, './template')
+  const filePath = path.resolve('./src', './template')
   let tmpl = fs.readFileSync(filePath, 'utf8')
   let out = tmpl.replace('${props}', content.props)
   out = out.replace('${methods}', content.methods)
@@ -22,7 +22,7 @@ function template(content) {
   return out
 }
 
-module.exports = function parse(str) {
+export default function parse(str) {
   const splits = str.split(/<script.*\>/)
 
   prevent('NO_SCRIPT', splits.length === 1)

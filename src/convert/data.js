@@ -1,11 +1,11 @@
-const prevent = require('../utils/prevent')
-const warning = require('../utils/warning')
-const { source } = require('../utils/source')
+import prevent from '../utils/prevent.js'
+import warning from '../utils/warning.js'
+import { source } from '../utils/source.js'
 
 const N = '\n' // new line
 const T = '  ' // tab
 
-module.exports = function convertData(op, script, done) {
+export default function convertData(op, script, done) {
 
   const refsOut = []
   const reactivesOut = []
