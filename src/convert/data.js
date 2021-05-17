@@ -10,9 +10,9 @@ module.exports = function convertData(op, script, done) {
   const refsOut = []
   const reactivesOut = []
   const funcBodyNodes = op.value.body.body
-  prevent('NOT_RETURN', funcBodyNodes.length !== 1 || funcBodyNodes[0].type !== 'ReturnStatement')
+  prevent('DATA_NOT_RETURNING', funcBodyNodes.length !== 1 || funcBodyNodes[0].type !== 'ReturnStatement')
   const objectNode = funcBodyNodes[0].argument
-  warning('NOT_DATA_OBJECT', objectNode.type !== 'ObjectExpression')
+  prevent('DATA_NOT_RETURNING_OBJECT', objectNode.type !== 'ObjectExpression')
   const items = objectNode.properties
   items.forEach(item => {
     const dataType = item.value.type
