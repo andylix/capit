@@ -3,8 +3,9 @@ import newFuncName from '../utils/newFuncName.js'
 
 const N = '\n' // new line
 const T = '  ' // tab
+const NEW_LIFECYCLE_NAMES = ['onBeforeMount', 'onMounted', 'onBeforeUpdate', 'onUpdated', 'onBeforeUnmount', 'onUnmounted', 'onErrorCaptured', 'onRenderTracked', 'onRenderTriggered']
 
-export default function convertMethods(op, script, done) {
+export default function convertMethods($property, script, done) {
 
   const allMethodsOut = []
   const allLifecyclesOut = []
@@ -12,20 +13,17 @@ export default function convertMethods(op, script, done) {
   let createdOut = ''
   const returnables = []
 
-  const methods = op.value.properties
+  const $properties = $property.value.properties
 
-  methods.forEach(node => {
+  $properties.forEach($node => {
 
-    let funcName = newFuncName(node.key.name)
-    let funcBody = sourceFuncBody(script, node)
+    let funcName = newFuncName($node.key.name)
+    let funcBody = sourceFuncBody(script, $node)
 
     let methodOut = ''
     let lifecycleOut = ''
-
-    // GENERATE OUTPUT
     
-    if(['onBeforeMount', 'onMounted', 'onBeforeUpdate', 'onUpdated', 'onBeforeUnmount', 
-        'onUnmounted', 'onErrorCaptured', 'onRenderTracked', 'onRenderTriggered'].indexOf(funcName) > -1) {
+    if(NEW_LIFECYCLE_NAMES.indexOf(funcName) > -1) {
       lifecycleOut = `${funcName}(function${funcBody})`
     }
     else if(funcName === 'beforeCreate') {
@@ -46,7 +44,7 @@ export default function convertMethods(op, script, done) {
     if(lifecycleOut !== '') {
       allLifecyclesOut.push(lifecycleOut)
     }
-  })// end forEach
+  })
 
   const methodsOut = allMethodsOut.join(N+N+T+T)
   const lifecyclesOut = allLifecyclesOut.join(N+N+T+T)

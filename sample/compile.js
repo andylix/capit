@@ -15,7 +15,10 @@ let script = splits2[0].trim()
 const outputScript = parse(script)
 const [ top, bottom ] = file.split(script)
 const output = top + outputScript + bottom
-console.log(output)
+
+const GREEN = "\x1b[32m"
+const END = "\x1b[0m"
+console.log(GREEN+"%s"+END, 'Compiled Successfully');
 
 fs.writeFile('./sample/OutputFile.vue', output, err => {
   if (err) {

@@ -10,16 +10,17 @@ export default function parse(script) {
 
   prevent('NO_CODE', script === '')
 
-  const ast = Parser.parse(script, {})
-  const lastNode = ast.body[ast.body.length-1]
+  const $ast = Parser.parse(script, {})
+  const last = $ast.body.length-1
+  const $export = $ast.body[last]
 
-  prevent('NO_EXPORT', lastNode.type !== 'ExportDefaultDeclaration')
+  prevent('NO_EXPORT', $export.type !== 'ExportDefaultDeclaration')
 
-  const declaration = lastNode.declaration
+  const $declaration = $export.declaration
 
-  prevent('NO_OBJECT', declaration.type !== 'ObjectExpression')
+  prevent('NO_OBJECT', $declaration.type !== 'ObjectExpression')
 
-  const properties = declaration.properties
+  const $properties = $declaration.properties
 
   let out = { 
     props: null,
@@ -35,35 +36,35 @@ export default function parse(script) {
     returnMethods: [],
   }
 
-  properties.forEach(op => {
+  $properties.forEach($node => {
 
-    if(op.key.name === 'props') {
-      prevent('PROPS_NOT_OBJECT', op.value.type !== 'ObjectExpression')
-      convertProps(op, script, props => {
+    if($node.key.name === 'props') {
+      prevent('PROPS_NOT_OBJECT', $node.value.type !== 'ObjectExpression')
+      convertProps($node, script, props => {
         out.props = props
       })
     }
 
-    if(op.key.name === 'data') {
-      prevent('DATA_NOT_FUNCTION', op.value.type !== 'FunctionExpression')
-      convertData(op, script, function(refs, reactives, returnables) {
+    if($node.key.name === 'data') {
+      prevent('DATA_NOT_FUNCTION', $node.value.type !== 'FunctionExpression')
+      convertData($node, script, function(refs, reactives, returnables) {
         out.refs = refs
         out.reactives = reactives
         out.returnRefsReactives = returnables
       })
     }
 
-    if(op.key.name === 'computed') {
-      prevent('COMPUTED_NOT_OBJECT', op.value.type !== 'ObjectExpression')
-      convertComputed(op, script, function(computed, returnables) {
+    if($node.key.name === 'computed') {
+      prevent('COMPUTED_NOT_OBJECT', $node.value.type !== 'ObjectExpression')
+      convertComputed($node, script, function(computed, returnables) {
         out.computed = computed
         out.returnComputed = returnables
       })
     }
 
-    if(op.key.name === 'methods') {
-      prevent('METHODS_NOT_OBJECT', op.value.type !== 'ObjectExpression')
-      convertMethods(op, script, function(methods, lifecycles, beforeCreate, created, returnables) {
+    if($node.key.name === 'methods') {
+      prevent('METHODS_NOT_OBJECT', $node.value.type !== 'ObjectExpression')
+      convertMethods($node, script, function(methods, lifecycles, beforeCreate, created, returnables) {
         out.methods = methods
         out.lifecycles = lifecycles
         out.beforeCreate = beforeCreate

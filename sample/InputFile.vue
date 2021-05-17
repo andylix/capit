@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p>{{ label }}: {{ count }}</p>
+    <p>{{ label }} {{ count }}</p>
     <button @click="add">Add</button>
     <p>(the next value is {{ next }})</p>
     <p>
@@ -15,12 +15,16 @@ export default {
     interval: {
       type: Number,
       default: 1
+    },
+    labelSeparator: {
+      type: String,
+      default: ':'
     }
   },
   data() {
     return {
       count: 0,
-      label: 'Count',
+      label: 'Count' + this.labelSeparator,
       tags: ['vuejs', 'javascript', 'web development'],
       config: {
         darkMode: true,

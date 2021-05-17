@@ -41,5 +41,7 @@ export default function render(content) {
   const returnStatement = `return { ${returns.join(', ')} }`
   out = out.replace('${returns}', returnStatement)
 
+  out = out.replace(/this\./g, '')
+
   return out
 }

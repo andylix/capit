@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p>{{ label }}: {{ count }}</p>
+    <p>{{ label }} {{ count }}</p>
     <button @click="add">Add</button>
     <p>(the next value is {{ next }})</p>
     <p>
@@ -15,6 +15,10 @@ export default {
     interval: {
       type: Number,
       default: 1
+    },
+    labelSeparator: {
+      type: String,
+      default: ':'
     }
   },
   setup() {
@@ -25,7 +29,7 @@ export default {
 
     const count = ref(0)
 
-    const label = ref(Count)
+    const label = ref('Count' + labelSeparator)
 
     const tags = ref(['vuejs', 'javascript', 'web development'])
 
@@ -34,11 +38,11 @@ export default {
       })
 
     const next = computed(function() {
-      return this.count + this.interval
+      return count + interval
     })
 
     const backgroundColor = computed(function() {
-      return this.darkMode ? 'black' : 'white'
+      return darkMode ? 'black' : 'white'
     })
 
     (function created() {
@@ -82,7 +86,7 @@ export default {
     })
 
     const add = function() {
-      this.count++
+      count++
     }
 
     return { count, label, tags, config, next, backgroundColor, add }
